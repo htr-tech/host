@@ -4,7 +4,7 @@
 ***Host is an Opensource webhosting tool.You can host your website on your localhost ; On Ngrok or Seveo.But you must upload your website on **~/host/htdoc**.This tool is specially made for termux.***
 #
 ## **[!] Don't Copy My work.If you Copy then give me Credits. [!]**
-<img src="https://i.ibb.co/8BJX0b6/1.jpg" alt="1" border="0">
+<img src="https://i.ibb.co/qmCVZx8/1.jpg" alt="1" border="0">
 
 ## [+] Installation :
 

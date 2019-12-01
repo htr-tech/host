@@ -19,6 +19,7 @@
 ```
 apt update && apt install git php curl openssh -y && git clone https://github.com/htr-tech/host && cd host && chmod +x host.sh && bash host.sh
 ```
+# Upload Your Files To ~/host/htdocs dir.
 #
 ## [+] Features :
 #### [+] Different Port Forwarding Options !

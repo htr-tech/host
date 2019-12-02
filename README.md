@@ -1,4 +1,4 @@
-# Host v_1.0
+# Host v_1.1
 ### [+] Created By HTR-TECH (@***tahmid.rayat***)
 ### [+] Disclaimer :
 ***Host is an Opensource webhosting tool.You can host your website on your localhost ; On Ngrok or Seveo.But you must upload your website on ~/host/htdocs.This tool is specially made for termux.***

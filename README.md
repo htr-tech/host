@@ -1,37 +1,52 @@
-# Host v_2.0
-### [+] Created By HTR-TECH (@***tahmid.rayat***)
-### [+] Disclaimer :
-***Host is an Opensource webhosting tool.You can host your website on your localhost ; On Ngrok or Seveo.But you must upload your website on ~/host/htdocs.This tool is specially made for termux.***
+<p align="left">
+<a href="#"><img title="Made in Bangladesh" src="https://img.shields.io/badge/MADE%20IN-BANGLADESH-green?colorA=%23ff0000&colorB=%23017e40&style=for-the-badge"></a>
+</p>
+<p align="center">
+<a href="#"><img title="Host" src="https://raw.githubusercontent.com/htr-tech/release-download/master/images/banner/host.png"></a>
+</p>
+<p align="center">
+<a href="https://github.com/htr-tech"><img title="Author" src="https://img.shields.io/badge/Author-htr--tech-red.svg?style=for-the-badge&logo=github"></a>
+<a href="#"><img title="Open Source" src="https://img.shields.io/badge/Open%20Source-%E2%9D%A4-green?style=for-the-badge"></a>
+</p>
+<p align="center">
+<a href="#"><img title="Version" src="https://img.shields.io/badge/Version-2.0-green.svg?style=flat-square"></a>
+<a href="#"><img title="Language" src="https://badges.frapsoft.com/bash/v1/bash.png?v=103"></a>
+<a href="https://github.com/htr-tech/followers"><img title="Followers" src="https://img.shields.io/github/followers/htr-tech?color=blue&style=flat-square"></a>
+<a href="https://github.com/htr-tech/host/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/htr-tech/host?color=red&style=flat-square"></a>
+<a href="https://github.com/htr-tech/host/network/members"><img title="Forks" src="https://img.shields.io/github/forks/htr-tech/host?color=red&style=flat-square"></a>
+<a href="https://github.com/htr-tech/host/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/htr-tech/host?label=Watchers&color=blue&style=flat-square"></a>
+</p>
 
-## **[!] Don't Copy My work.If you Copy then give me Credits. [!]**
-<img src="https://raw.githubusercontent.com/htr-tech/release-download/master/images/host.png" alt="" border="0">
+## Installation :
 
-## [+] Installation :
+* `apt update`
+* `apt install git curl php openssh -y`
+* `git clone git://github.com/htr-tech/host.git`
+* `cd host`
 
-* ```apt update```
-* ```apt install git php openssh curl -y```
-* ```git clone https://github.com/htr-tech/host```
-* ```cd host```
-* ```chmod +x host.sh```
-* ```bash host.sh```
+#### > Run : `bash host.sh`
 
-### Or ; Use Single Command
+## Single Command :
 ```
-apt update && apt install git php curl openssh -y && git clone https://github.com/htr-tech/host && cd host && chmod +x host.sh && bash host.sh
+apt update ; apt install git curl php openssh -y ; git clone git://github.com/htr-tech/host.git ; cd host ; bash host.sh
 ```
-# Upload Your Files To ~/host/htdocs dir.
+<br>
+<p align="center">
+<img src="https://raw.githubusercontent.com/htr-tech/release-download/master/images/host.png"/>
 
-## [+] Features :
-#### [+] Different Port Forwarding Options !
-#### [+] Upload to localhost !
-#### [+] Localhost.run Added
-#### [+] All types of Bugs Fixed !
-#### [+] Useful for Beginners !
+### <<< If you copy , Then Give me The Credits >>>
 
-## **[!] Don't Copy My work.If you Copy then give me Credits. [!]**
+## Features :
+#### [+] 4 Port Forwarding Options !
+#### [+] Easy for Beginners !
 
-## [+] Find Me on :
+## Tunelling Options :
+#### > Localhost (127.0.0.1)
+#### > NGROK (https://ngrok.com)
+#### > SERVEO (https://serveo.net)
+#### > LOCALHOSTRUN (https://localhost.run)
+
+## Find Me on :
 [![Github](https://img.shields.io/badge/Github-HTR--TECH-green?style=for-the-badge&logo=github)](https://github.com/htr-tech)
 [![Instagram](https://img.shields.io/badge/IG-%40tahmid.rayat-red?style=for-the-badge&logo=instagram)](https://www.instagram.com/tahmid.rayat)
 [![Messenger](https://img.shields.io/badge/Chat-Messenger-blue?style=for-the-badge&logo=messenger)](https://m.me/tahmid.rayat.official)
-

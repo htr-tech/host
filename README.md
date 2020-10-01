@@ -45,6 +45,12 @@ apt update ; apt install git curl php openssh -y ; git clone git://github.com/ht
 #### > NGROK (https://ngrok.com)
 #### > SERVEO (https://serveo.net)
 #### > LOCALHOSTRUN (https://localhost.run)
+#### > LOCALXPOSE (https://localxpose.io)
+#### > LOCALTUNNEL (Package Version) (https://localtunnel.me)
+#### > OPENPORT (https://openport.io/)
+#### >PAG EKITE (https://pagekite.net/)
+
+
 
 ## Find Me on :
 [![Github](https://img.shields.io/badge/Github-HTR--TECH-green?style=for-the-badge&logo=github)](https://github.com/htr-tech)

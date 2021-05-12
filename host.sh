@@ -173,11 +173,11 @@ package(){
                     printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}${i}${RS}\n"
                     
                     if [[ `command -v apt` ]]; then
-                        apt install "$i"
+                        apt install "$i" -y
                     elif [[ `command -v apt-get` ]]; then
-                        apt-get install "$i"
+                        apt-get install "$i" -y
                     elif [[ `command -v pkg` ]]; then
-                        pkg install "$i"
+                        pkg install "$i" -y
                     elif [[ `command -v dnf` ]]; then
                         sudo dnf -y install "$i"
                     else

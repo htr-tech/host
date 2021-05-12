@@ -9,7 +9,7 @@
 <a href="#"><img title="Open Source" src="https://img.shields.io/badge/Open%20Source-%E2%9D%A4-green?style=for-the-badge"></a>
 </p>
 <p align="center">
-<a href="#"><img title="Version" src="https://img.shields.io/badge/Version-2.0-green.svg?style=flat-square"></a>
+<a href="#"><img title="Version" src="https://img.shields.io/badge/Version-2.1-green.svg?style=flat-square"></a>
 <a href="#"><img title="Language" src="https://badges.frapsoft.com/bash/v1/bash.png?v=103"></a>
 <a href="https://github.com/htr-tech/followers"><img title="Followers" src="https://img.shields.io/github/followers/htr-tech?color=blue&style=flat-square"></a>
 <a href="https://github.com/htr-tech/host/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/htr-tech/host?color=red&style=flat-square"></a>
@@ -20,7 +20,7 @@
 ## Installation :
 
 * `apt update`
-* `apt install git curl php openssh -y`
+* `apt install git -y`
 * `git clone git://github.com/htr-tech/host.git`
 * `cd host`
 
@@ -28,7 +28,7 @@
 
 ## Single Command :
 ```
-apt update ; apt install git curl php openssh -y ; git clone git://github.com/htr-tech/host.git ; cd host ; bash host.sh
+apt update ; apt install git -y ; git clone git://github.com/htr-tech/host.git ; cd host ; bash host.sh
 ```
 <br>
 <p align="center">
@@ -37,14 +37,12 @@ apt update ; apt install git curl php openssh -y ; git clone git://github.com/ht
 ### <<< If you copy , Then Give me The Credits >>>
 
 ## Features :
-#### [+] 4 Port Forwarding Options !
+#### [+] 2 Port Forwarding Options !
 #### [+] Easy for Beginners !
 
 ## Tunelling Options :
 #### > Localhost (127.0.0.1)
 #### > NGROK (https://ngrok.com)
-#### > SERVEO (https://serveo.net)
-#### > LOCALHOSTRUN (https://localhost.run)
 
 ## Find Me on :
 [![Github](https://img.shields.io/badge/Github-HTR--TECH-green?style=for-the-badge&logo=github)](https://github.com/htr-tech)

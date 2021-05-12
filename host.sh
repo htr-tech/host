@@ -158,7 +158,7 @@ package(){
         if [[ `command -v proot` ]]; then
             printf ''
         else
-			printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}Proot${RS}"
+			printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}Proot${RS}\n"
             pkg install proot resolv-conf -y
         fi
     fi
@@ -170,7 +170,7 @@ package(){
         for i in "${repr[@]}"; do
             type -p "$i" &>/dev/null || 
                 { 
-                    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}${i}${RS}"
+                    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}${i}${RS}\n"
                     
                     if [[ `command -v apt` ]]; then
                         apt install "$i"

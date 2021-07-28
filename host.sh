@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##   Host 	    : 	Expose your Localhost :) Temporary File hosting using Ngrok
-##   Author 	: 	TAHMID RAYAT 
+##   Author 	: 	TAHMID RAYAT
 ##   Version 	: 	2.1
 ##   Github 	: 	https://github.com/htr-tech
 
@@ -103,7 +103,7 @@ kill_pid() {
 	fi
 	if [[ `pidof ngrok` ]]; then
 		killall ngrok > /dev/null 2>&1
-	fi	
+	fi
 }
 
 
@@ -111,11 +111,11 @@ kill_pid() {
 logo(){
 
 clear
-echo "${CY}     _    _           _   
-${CY}    | |  | |  ${CC}V${CB}-${CG}2.1${CY}  | |  
-${CG}    | |__| | ___  ___| |_ 
+echo "${CY}     _    _           _
+${CY}    | |  | |  ${CC}V${CB}-${CG}2.1${CY}  | |
+${CG}    | |__| | ___  ___| |_
 ${CG}    |  __  |/ _ \/ __| __|
-${CY}    | |  | | (_) \__ \ |_ 
+${CY}    | |  | | (_) \__ \ |_
 ${CY}    |_|  |_|\___/|___/\__|
 ${RS}
 ${CR} [${CW}~${CR}]${CY} Created By HTR-TECH ${CG}(${CC}Tahmid Rayat${CG})${RS}"
@@ -129,7 +129,7 @@ path(){
     printf "\n${RS}"
     printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Select A Hosting option: ${CC}"
     read red_path
-    
+
     if [[ $red_path == 1 || $red_path == 01 ]]; then
         path=$'./htdocs'
     elif [[ $red_path == 2 || $red_path == 02 ]]; then
@@ -145,7 +145,7 @@ path(){
     if [[ ! -d "$path" ]]; then
 	    mkdir -p "$path"
     fi
-    
+
     menu
 
 }
@@ -168,10 +168,10 @@ package(){
     else
         repr=(curl php wget unzip)
         for i in "${repr[@]}"; do
-            type -p "$i" &>/dev/null || 
-                { 
+            type -p "$i" &>/dev/null ||
+                {
                     printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}${i}${RS}\n"
-                    
+
                     if [[ `command -v apt` ]]; then
                         apt install "$i" -y
                     elif [[ `command -v apt-get` ]]; then
@@ -207,12 +207,12 @@ localhost() {
 }
 
 install_ngrok() {
-	
+
     if [[ -e "ngrok" ]]; then
 		printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Ngrok already installed.${RS}"
 	else
 		printf "\n${RS} ${CR}[${CW}-${CR}]${CC} Installing ngrok...${RS}"
-		
+
 		if [[ ("$architecture" == *'arm'*) || ("$architecture" == *'Android'*) ]]; then
 			ngrok_file='https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip'
 		elif [[ "$architecture" == *'aarch64'* ]]; then
@@ -225,7 +225,7 @@ install_ngrok() {
 
         wget "$ngrok_file" --no-check-certificate > /dev/null 2>&1
         ngrok_deb=`basename $ngrok_file`
-    
+
     	if [[ -e "$ngrok_deb" ]]; then
 		    unzip "$ngrok_deb" > /dev/null 2>&1
 		    rm -rf "$ngrok_deb" > /dev/null 2>&1
@@ -262,13 +262,13 @@ ngrok() {
 }
 
 menu() {
-		
+
     echo -e "\n${CR} [${CW}01${CR}]${CG} Localhost ${CR}[${CC}For Devs${CR}]"
 	echo -e "${CR} [${CW}02${CR}]${CG} Ngrok.io  ${CR}[${CC}Best${CR}]"
 
 	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Select an Option: ${CB}"
     read MEW
-    
+
     if [[ "$MEW" == 1 || "$MEW" == 01 ]]; then
 		localhost
 	elif [[ "$MEW" == 2 || "$MEW" == 02 ]]; then

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-##   Host 	    : 	Expose your Localhost :) Temporary File hosting using Ngrok
+##   Host 	    : 	Expose your Localhost :) Temporary File hosting
 ##   Author 	: 	TAHMID RAYAT 
-##   Version 	: 	2.1
+##   Version 	: 	2.2
 ##   Github 	: 	https://github.com/htr-tech
 
 ## If you Copy Then Give the credits :)
@@ -77,7 +77,7 @@
 ##    The precise terms and conditions for copying, distribution and
 ##    modification follow.
 ##
-##      Copyright (C) 2021  HTR-TECH (https://github.com/htr-tech)
+##      Copyright (C) 2022  HTR-TECH (https://github.com/htr-tech)
 ##
 
 # Deafult Port
@@ -90,29 +90,28 @@ architecture=`uname -m`
 
 # Terminate Program
 terminated() {
-    printf "\n\n${RS} ${CR}[${CW}!${CR}]${CY} Program Interrupted ${CR}[${CW}!${CR}]${RS}\n"
-    exit 1
+	printf "\n\n${RS} ${CR}[${CW}!${CR}]${CY} Program Interrupted ${CR}[${CW}!${CR}]${RS}\n"
+	exit 1
 }
 
 trap terminated SIGTERM
 trap terminated SIGINT
 
 kill_pid() {
-	if [[ `pidof php` ]]; then
-		killall php > /dev/null 2>&1
-	fi
-	if [[ `pidof ngrok` ]]; then
-		killall ngrok > /dev/null 2>&1
-	fi	
+	check_PID="php ngrok cloudflared"
+	for process in ${check_PID}; do
+		if [[ $(pidof ${process}) ]]; then
+			killall ${process} > /dev/null 2>&1
+		fi
+	done
 }
-
 
 # Host Banner
 logo(){
 
 clear
 echo "${CY}     _    _           _   
-${CY}    | |  | |  ${CC}V${CB}-${CG}2.1${CY}  | |  
+${CY}    | |  | |  ${CC}V${CB}-${CG}2.2${CY}  | |  
 ${CG}    | |__| | ___  ___| |_ 
 ${CG}    |  __  |/ _ \/ __| __|
 ${CY}    | |  | | (_) \__ \ |_ 
@@ -124,29 +123,26 @@ ${CR} [${CW}~${CR}]${CY} Created By HTR-TECH ${CG}(${CC}Tahmid Rayat${CG})${RS}"
 
 path(){
 
-    printf "\n${RS} ${CR}[${CW}1${CR}]${CY} Use Current Path [host/htdocs]"
-    printf "\n${RS} ${CR}[${CW}2${CR}]${CY} Setup a Path"
-    printf "\n${RS}"
-    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Select A Hosting option: ${CC}"
-    read red_path
-    
-    if [[ $red_path == 1 || $red_path == 01 ]]; then
-        path=$'./htdocs'
-    elif [[ $red_path == 2 || $red_path == 02 ]]; then
-        printf "\n${RS} ${CC}Enter File Path [Example : /home/tahmid/htdocs]"
-        printf "\n${RS}"
-        printf "\n${RS} ${CR}>>${CG} ${CC}"
-        read path
-    else
-        printf "\n${RS} ${CR}[${CW}!${CR}]${CY} Invalid option ${CR}[${CW}!${CR}]${RS}\n"
-        sleep 2 ; logo ; path
-    fi
+	printf "\n${RS} ${CR}[${CW}1${CR}]${CY} Use Current Path [host/htdocs]"
+	printf "\n${RS} ${CR}[${CW}2${CR}]${CY} Setup a Path"
+	printf "\n${RS}"
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Select A Hosting option: ${CC}"
+	read red_path
+	
+	if [[ $red_path == 1 || $red_path == 01 ]]; then
+		path=$'./htdocs'
+	elif [[ $red_path == 2 || $red_path == 02 ]]; then
+		printf "\n${RS} ${CC}Enter File Path [Example : /home/tahmid/htdocs]"
+		printf "\n${RS}"
+		printf "\n${RS} ${CR}>>${CG} ${CC}"
+		read path
+	else
+		printf "\n${RS} ${CR}[${CW}!${CR}]${CY} Invalid option ${CR}[${CW}!${CR}]${RS}\n"
+		sleep 2 ; logo ; path
+	fi
 
-    if [[ ! -d "$path" ]]; then
-	    mkdir -p "$path"
-    fi
-    
-    menu
+	[[ ! -d "$path" ]] && mkdir -p "$path"  
+	menu
 
 }
 
@@ -154,133 +150,189 @@ package(){
 
 	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Setting up Environment..${RS}"
 
-    if [[ -d "/data/data/com.termux/files/home" ]]; then
-        if [[ `command -v proot` ]]; then
-            printf ''
-        else
+	if [[ -d "/data/data/com.termux/files/home" ]]; then
+		if [[ ! $(command -v proot) ]]; then
 			printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}Proot${RS}\n"
-            pkg install proot resolv-conf -y
-        fi
-    fi
-
-    if [[ `command -v curl` && `command -v php` && `command -v wget` && `command -v unzip` ]]; then
-        printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Environment Setup Completed !${RS}"
-    else
-        repr=(curl php wget unzip)
-        for i in "${repr[@]}"; do
-            type -p "$i" &>/dev/null || 
-                { 
-                    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}${i}${RS}\n"
-                    
-                    if [[ `command -v apt` ]]; then
-                        apt install "$i" -y
-                    elif [[ `command -v apt-get` ]]; then
-                        apt-get install "$i" -y
-                    elif [[ `command -v pkg` ]]; then
-                        pkg install "$i" -y
-                    elif [[ `command -v dnf` ]]; then
-                        sudo dnf -y install "$i"
-                    else
-                        printf "\n${RS} ${CR}[${CW}!${CR}]${CY} Unfamiliar Distro ${CR}[${CW}!${CR}]${RS}\n"
-                        exit 1
-                    fi
-                }
-        done
-    fi
-
-}
-
-localhost() {
-
-    printf "\n${RS} ${CR}[${CW}-${CR}]${CY} Input Port [default:${def_port}]: ${CC}"
-    read port
-    port="${port:-${def_port}}"
-    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${port}${RS}\n"
-    cd "$path" && php -S 127.0.0.1:"$port" > /dev/null 2>&1 &
-    sleep 2
-    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}http://127.0.0.1:$port ${RS}"
-    printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
-    while [ true ]; do
-        sleep 0.75
-    done
-
-}
-
-install_ngrok() {
-	
-    if [[ -e "ngrok" ]]; then
-		printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Ngrok already installed.${RS}"
-	else
-		printf "\n${RS} ${CR}[${CW}-${CR}]${CC} Installing ngrok...${RS}"
-		
-		if [[ ("$architecture" == *'arm'*) || ("$architecture" == *'Android'*) ]]; then
-			ngrok_file='https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip'
-		elif [[ "$architecture" == *'aarch64'* ]]; then
-			ngrok_file='https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm64.zip'
-		elif [[ "$architecture" == *'x86_64'* ]]; then
-			ngrok_file='https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip'
-		else
-			ngrok_file='https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-386.zip'
+			pkg install proot resolv-conf -y
 		fi
+	fi
 
-        wget "$ngrok_file" --no-check-certificate > /dev/null 2>&1
-        ngrok_deb=`basename $ngrok_file`
-    
-    	if [[ -e "$ngrok_deb" ]]; then
-		    unzip "$ngrok_deb" > /dev/null 2>&1
-		    rm -rf "$ngrok_deb" > /dev/null 2>&1
-		    chmod +x ./ngrok > /dev/null 2>&1
-        else
-            echo -e "\n${RS} ${CR}[${CW}!${CR}]${CY} Error occured, Install Ngrok manually.${RS}"
-            exit 1
-        fi
-    fi
-
-}
-
-ngrok() {
-
-    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${def_port}${RS}\n"
-    cd "$path" && php -S 127.0.0.1:"$def_port" > /dev/null 2>&1 &
-    sleep 1
-    printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Launching Ngrok on Port ${CY}${def_port}${RS}"
-
-    if [[ `command -v termux-chroot` ]]; then
-        sleep 2 && termux-chroot ./ngrok http 127.0.0.1:"$def_port" > /dev/null 2>&1 &
-    else
-        sleep 2 && ./ngrok http 127.0.0.1:"$def_port" > /dev/null 2>&1 &
-    fi
-
-    sleep 8
-    ngrok_url=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[0-9a-z]*\.ngrok.io")
-    printf "\n\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}${ngrok_url}${RS}"
-    printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
-    while [ true ]; do
-        sleep 0.75
-    done
-
-}
-
-menu() {
-		
-    echo -e "\n${CR} [${CW}01${CR}]${CG} Localhost ${CR}[${CC}For Devs${CR}]"
-	echo -e "${CR} [${CW}02${CR}]${CG} Ngrok.io  ${CR}[${CC}Best${CR}]"
-
-	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Select an Option: ${CB}"
-    read MEW
-    
-    if [[ "$MEW" == 1 || "$MEW" == 01 ]]; then
-		localhost
-	elif [[ "$MEW" == 2 || "$MEW" == 02 ]]; then
-        ngrok
+	if [[ $(command -v php) && $(command -v curl) && $(command -v unzip) ]]; then
+		printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Environment Setup Completed !${RS}"
 	else
-		printf "\n${RS} ${CR}[${CW}!${CR}]${CY} Invalid option ${CR}[${CW}!${CR}]${RS}\n"
-		sleep 2 ; logo ; path
+		repr=(curl php unzip)
+		for i in "${repr[@]}"; do
+			type -p "$i" &>/dev/null || 
+				{ 
+					printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}${i}${RS}\n"
+					
+					if [[ $(command -v pkg) ]]; then
+						pkg install "$i" -y
+					elif [[ $(command -v apt) ]]; then
+						sudo apt install "$i" -y
+					elif [[ $(command -v apt-get) ]]; then
+						sudo apt-get install "$i" -y
+					elif [[ $(command -v dnf) ]]; then
+						sudo dnf -y install "$i"
+					else
+						printf "\n${RS} ${CR}[${CW}!${CR}]${CY} Unfamiliar Distro ${CR}[${CW}!${CR}]${RS}\n"
+						exit 1
+					fi
+				}
+		done
 	fi
 
 }
 
+localhost() {
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CY} Input Port [default:${def_port}]: ${CC}"
+	read port
+	port="${port:-${def_port}}"
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${port}${RS}\n"
+	cd "$path" && php -S 127.0.0.1:"$port" > /dev/null 2>&1 &
+	sleep 2
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}http://127.0.0.1:$port ${RS}"
+	printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
+	while [ true ]; do
+		sleep 0.75
+	done
 
-kill_pid ; package ; install_ngrok ; logo ; path
+}
 
+# Download Binaries
+download() {
+	url="$1"
+	output="$2"
+	file=`basename $url`
+	if [[ -e "$file" || -e "$output" ]]; then
+		rm -rf "$file" "$output"
+	fi
+	curl --silent --insecure --fail --retry-connrefused \
+		--retry 3 --retry-delay 2 --location --output "${file}" "${url}"
 
+	if [[ -e "$file" ]]; then
+		if [[ ${file#*.} == "tgz" ]]; then
+			tar -zxf $file > /dev/null 2>&1
+		else
+			mv -f $file $output > /dev/null 2>&1
+		fi
+		chmod +x $output > /dev/null 2>&1
+		rm -rf "$file"
+	else
+		echo -e "\n${RS} ${CR}[${CW}!${CR}]${CY} Error occured while downloading ${CR}${output}."
+		exit 1
+	fi
+}
+
+## Install ngrok
+install_ngrok() {
+	if [[ -e "./ngrok" ]]; then
+		printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Ngrok already installed.${RS}"
+	else
+		printf "\n${RS} ${CR}[${CW}-${CR}]${CC} Installing ngrok...${RS}"
+		if [[ ("$architecture" == *'arm'*) || ("$architecture" == *'Android'*) ]]; then
+			download 'https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm.tgz' 'ngrok'
+		elif [[ "$architecture" == *'aarch64'* ]]; then
+			download 'https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm64.tgz' 'ngrok'
+		elif [[ "$architecture" == *'x86_64'* ]]; then
+			download 'https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz' 'ngrok'
+		else
+			download 'https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-386.tgz' 'ngrok'
+		fi
+	fi
+}
+
+## Install Cloudflared
+install_cloudflared() {
+	if [[ -e "./cloudflared" ]]; then
+		printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Cloudflared already installed.${RS}"
+	else
+		printf "\n${RS} ${CR}[${CW}-${CR}]${CC} Installing Cloudflared...${RS}"
+		if [[ ("$architecture" == *'arm'*) || ("$architecture" == *'Android'*) ]]; then
+			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' 'cloudflared'
+			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' 'cloudflared'
+			
+		elif [[ "$architecture" == *'aarch64'* ]]; then
+			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64' 'cloudflared'
+		elif [[ "$architecture" == *'x86_64'* ]]; then
+			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' 'cloudflared'
+		else
+			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-386' 'cloudflared'
+		fi
+	fi
+}
+
+## Start ngrok
+ngrok() {
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${def_port}${RS}\n"
+	cd "$path" && php -S 127.0.0.1:"$def_port" > /dev/null 2>&1 &
+	sleep 1
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Launching Ngrok on Port ${CY}${def_port}${RS}"
+
+	if [[ `command -v termux-chroot` ]]; then
+		sleep 2 && termux-chroot ./ngrok http 127.0.0.1:"$def_port" --log=stdout > /dev/null 2>&1 &
+	else
+		sleep 2 && ./ngrok http 127.0.0.1:"$def_port" --log=stdout > /dev/null 2>&1 &
+	fi
+
+	sleep 8
+	ngrk=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -Eo '(https)://[^/"]+(.ngrok.io)')
+	printf "\n\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}${ngrk}${RS}"
+	printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
+	while [ true ]; do
+		sleep 0.75
+	done
+
+}
+
+## Start Cloudflared
+cloudflared() { 
+	rm .cld.log > /dev/null 2>&1 &
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${def_port}${RS}\n"
+	cd "$path" && php -S 127.0.0.1:"$def_port" > /dev/null 2>&1 &
+	sleep 1
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Launching Cloudflared on Port ${CY}${def_port}${RS}"
+
+	if [[ `command -v termux-chroot` ]]; then
+		sleep 2 && termux-chroot ./cloudflared tunnel -url 127.0.0.1:"$def_port" --logfile .cld.log > /dev/null 2>&1 &
+	else
+		sleep 2 && ./cloudflared tunnel -url 127.0.0.1:"$def_port" --logfile .cld.log > /dev/null 2>&1 &
+	fi
+
+	sleep 8
+	cldflr=$(grep -o 'https://[-0-9a-z]*\.trycloudflare.com' ".cld.log")
+	printf "\n\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}${cldflr}${RS}"
+	printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
+	while [ true ]; do
+		sleep 0.75
+	done
+
+}
+
+menu() {
+	echo -e "\n${CR} [${CW}01${CR}]${CG} Localhost ${CR}[${CC}Manual Forwarding${CR}]"
+	echo -e "${CR} [${CW}02${CR}]${CG} Ngrok.io [Auth Token Needed]"
+	echo -e "${CR} [${CW}03${CR}]${CG} Cloudflared"
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Select an Option: ${CB}"
+	read REPLY
+
+	case $REPLY in 
+		1 | 01)
+			localhost;;
+		2 | 02)
+			ngrok;;
+		3 | 03)
+			cloudflared;;
+		*)
+			printf "\n${RS} ${CR}[${CW}!${CR}]${CY} Invalid option ${CR}[${CW}!${CR}]${RS}\n"
+			sleep 2; logo; path;;
+	esac
+
+}
+
+kill_pid
+package
+install_ngrok
+install_cloudflared
+logo
+path

@@ -122,7 +122,6 @@ ${CR} [${CW}~${CR}]${CY} Created By HTR-TECH ${CG}(${CC}Tahmid Rayat${CG})${RS}"
 }
 
 path(){
-
 	printf "\n${RS} ${CR}[${CW}1${CR}]${CY} Use Current Path [host/htdocs]"
 	printf "\n${RS} ${CR}[${CW}2${CR}]${CY} Setup a Path"
 	printf "\n${RS}"
@@ -147,9 +146,7 @@ path(){
 }
 
 package(){
-
 	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Setting up Environment..${RS}"
-
 	if [[ -d "/data/data/com.termux/files/home" ]]; then
 		if [[ ! $(command -v proot) ]]; then
 			printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Installing ${CY}Proot${RS}\n"
@@ -249,9 +246,7 @@ install_cloudflared() {
 	else
 		printf "\n${RS} ${CR}[${CW}-${CR}]${CC} Installing Cloudflared...${RS}"
 		if [[ ("$architecture" == *'arm'*) || ("$architecture" == *'Android'*) ]]; then
-			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' 'cloudflared'
-			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' 'cloudflared'
-			
+			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm' 'cloudflared'	
 		elif [[ "$architecture" == *'aarch64'* ]]; then
 			download 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64' 'cloudflared'
 		elif [[ "$architecture" == *'x86_64'* ]]; then

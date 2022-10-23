@@ -2,7 +2,7 @@
 
 ##   Host 	    : 	Expose your Localhost :) Temporary File hosting
 ##   Author 	: 	TAHMID RAYAT 
-##   Version 	: 	2.2
+##   Version 	: 	2.3
 ##   Github 	: 	https://github.com/htr-tech
 
 ## If you Copy Then Give the credits :)
@@ -98,7 +98,7 @@ trap terminated SIGTERM
 trap terminated SIGINT
 
 kill_pid() {
-	check_PID="php ngrok cloudflared"
+	check_PID="php ngrok cloudflared loclx"
 	for process in ${check_PID}; do
 		if [[ $(pidof ${process}) ]]; then
 			killall ${process} > /dev/null 2>&1
@@ -111,7 +111,7 @@ logo(){
 
 clear
 echo "${CY}     _    _           _   
-${CY}    | |  | |  ${CC}V${CB}-${CG}2.2${CY}  | |  
+${CY}    | |  | |  ${CC}V${CB}-${CG}2.3${CY}  | |  
 ${CG}    | |__| | ___  ___| |_ 
 ${CG}    |  __  |/ _ \/ __| __|
 ${CY}    | |  | | (_) \__ \ |_ 
@@ -122,6 +122,7 @@ ${CR} [${CW}~${CR}]${CY} Created By HTR-TECH ${CG}(${CC}Tahmid Rayat${CG})${RS}"
 }
 
 path(){
+	logo
 	printf "\n${RS} ${CR}[${CW}1${CR}]${CY} Use Current Path [host/htdocs]"
 	printf "\n${RS} ${CR}[${CW}2${CR}]${CY} Setup a Path"
 	printf "\n${RS}"
@@ -140,9 +141,8 @@ path(){
 		sleep 2 ; logo ; path
 	fi
 
-	[[ ! -d "$path" ]] && mkdir -p "$path"  
+	[[ ! -d "$path" ]] && mkdir -p "$path"
 	menu
-
 }
 
 package(){
@@ -178,25 +178,9 @@ package(){
 				}
 		done
 	fi
-
 }
 
-localhost() {
-	printf "\n${RS} ${CR}[${CW}-${CR}]${CY} Input Port [default:${def_port}]: ${CC}"
-	read port
-	port="${port:-${def_port}}"
-	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${port}${RS}\n"
-	cd "$path" && php -S 127.0.0.1:"$port" > /dev/null 2>&1 &
-	sleep 2
-	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}http://127.0.0.1:$port ${RS}"
-	printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
-	while [ true ]; do
-		sleep 0.75
-	done
-
-}
-
-# Download Binaries
+## Download Binaries
 download() {
 	url="$1"
 	output="$2"
@@ -208,7 +192,9 @@ download() {
 		--retry 3 --retry-delay 2 --location --output "${file}" "${url}"
 
 	if [[ -e "$file" ]]; then
-		if [[ ${file#*.} == "tgz" ]]; then
+		if [[ ${file#*.} == "zip" ]]; then
+			unzip -qq $file > /dev/null 2>&1
+		elif [[ ${file#*.} == "tgz" ]]; then
 			tar -zxf $file > /dev/null 2>&1
 		else
 			mv -f $file $output > /dev/null 2>&1
@@ -257,17 +243,87 @@ install_cloudflared() {
 	fi
 }
 
+## Install LocalXpose
+install_localxpose() {
+	if [[ -e "./loclx" ]]; then
+		printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Localxpose already installed.${RS}"
+	else
+		printf "\n${RS} ${CR}[${CW}-${CR}]${CC} Installing Localxpose...${RS}"
+		if [[ ("$architecture" == *'arm'*) || ("$architecture" == *'Android'*) ]]; then
+			download 'https://api.localxpose.io/api/v2/downloads/loclx-linux-arm.zip' 'loclx'
+		elif [[ "$architecture" == *'aarch64'* ]]; then
+			download 'https://api.localxpose.io/api/v2/downloads/loclx-linux-arm64.zip' 'loclx'
+		elif [[ "$architecture" == *'x86_64'* ]]; then
+			download 'https://api.localxpose.io/api/v2/downloads/loclx-linux-amd64.zip' 'loclx'
+		else
+			download 'https://api.localxpose.io/api/v2/downloads/loclx-linux-386.zip' 'loclx'
+		fi
+	fi
+}
+
+## LocalXpose Authentication
+localxpose_auth() {
+	./loclx -help > /dev/null 2>&1 &
+	{ logo; sleep 1; }
+	[ -d ".localxpose" ] && auth_f=".localxpose/.access" || auth_f="$HOME/.localxpose/.access"
+	[ -d "/data/data/com.termux/files/home" ] && status=$(termux-chroot ./loclx account status) || status=$(./loclx account status)
+
+	if [[ $status == *"Error"* ]]; then
+		echo -e "\n${CR} [${CW}!${CR}]${CG} Create an account on ${CY}localxpose.io${CG} & copy the token\n"
+		sleep 3
+		read -p "${CR} [${CW}?${CR}]${CY} Input Loclx Token :${CY} " loclx_token
+		if [[ ${#loclx_token} -lt 10 ]]; then
+			echo -e "\n${CR} [${CQ}!${CR}]${CR} You have to input Localxpose Token."
+			sleep 2; menu;
+		else
+			echo -n "$loclx_token" > $auth_f 2> /dev/null
+		fi
+	fi
+}
+
+## Ngrok Authentication
+ngrok_auth() {
+	if ! [[ -e ".ngrok.yml" && $(awk -F'authtoken: ' '{print $2}' "./.ngrok.yml" | xargs) != "" ]]; then
+		{ logo; sleep 1; }
+		echo -e "\n${CR} [${CW}!${CR}]${CG} Create an account on ${CY}ngrok.com${CG} & copy the token\n"
+		sleep 3
+		read -p "${CR} [${CW}?${CR}]${CY} Input Ngrok.com Token :${CY} " ngrok_token
+		if [[ ${#ngrok_token} -lt 10 ]]; then
+			echo -e "\n${CR} [${CQ}!${CR}]${CR} You have to input valid ngrok Token."
+			sleep 2; menu;
+		else
+			./ngrok --config ".ngrok.yml" authtoken $ngrok_token > /dev/null 2>&1 &
+		fi
+	fi
+}
+
+## Host on Localhost. Just "php -S" lol
+localhost() {
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CY} Input Port [default:${def_port}]: ${CC}"
+	read port
+	port="${port:-${def_port}}"
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${port}${RS}\n"
+	cd "$path" && php -S 127.0.0.1:"$port" > /dev/null 2>&1 &
+	sleep 2
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}http://127.0.0.1:$port ${RS}"
+	printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
+	while [ true ]; do
+		sleep 0.75
+	done
+}
+
 ## Start ngrok
 ngrok() {
+	ngrok_auth
 	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${def_port}${RS}\n"
 	cd "$path" && php -S 127.0.0.1:"$def_port" > /dev/null 2>&1 &
 	sleep 1
 	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Launching Ngrok on Port ${CY}${def_port}${RS}"
 
 	if [[ `command -v termux-chroot` ]]; then
-		sleep 2 && termux-chroot ./ngrok http 127.0.0.1:"$def_port" --log=stdout > /dev/null 2>&1 &
+		sleep 2 && termux-chroot ./ngrok --config ".ngrok.yml" http 127.0.0.1:"$def_port" --log=stdout > /dev/null 2>&1 &
 	else
-		sleep 2 && ./ngrok http 127.0.0.1:"$def_port" --log=stdout > /dev/null 2>&1 &
+		sleep 2 && ./ngrok --config ".ngrok.yml" http 127.0.0.1:"$def_port" --log=stdout > /dev/null 2>&1 &
 	fi
 
 	sleep 8
@@ -277,7 +333,6 @@ ngrok() {
 	while [ true ]; do
 		sleep 0.75
 	done
-
 }
 
 ## Start Cloudflared
@@ -289,9 +344,9 @@ cloudflared() {
 	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Launching Cloudflared on Port ${CY}${def_port}${RS}"
 
 	if [[ `command -v termux-chroot` ]]; then
-		sleep 2 && termux-chroot ./cloudflared tunnel -url 127.0.0.1:"$def_port" --logfile .cld.log > /dev/null 2>&1 &
+		sleep 2 && termux-chroot ./cloudflared tunnel -url 127.0.0.1:"$def_port" --logfile ".cld.log" > /dev/null 2>&1 &
 	else
-		sleep 2 && ./cloudflared tunnel -url 127.0.0.1:"$def_port" --logfile .cld.log > /dev/null 2>&1 &
+		sleep 2 && ./cloudflared tunnel -url 127.0.0.1:"$def_port" --logfile ".cld.log" > /dev/null 2>&1 &
 	fi
 
 	sleep 8
@@ -301,13 +356,38 @@ cloudflared() {
 	while [ true ]; do
 		sleep 0.75
 	done
+}
 
+## Start LocalXpose
+localxpose() { 
+	rm .loclx.log > /dev/null 2>&1 &
+	localxpose_auth
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Starting PHP Server on Port ${CY}${def_port}${RS}\n"
+	cd "$path" && php -S 127.0.0.1:"$def_port" > /dev/null 2>&1 &
+	sleep 1
+	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Launching LocalXpose on Port ${CY}${def_port}${RS}"
+
+	if [[ `command -v termux-chroot` ]]; then
+		sleep 2 && termux-chroot ./loclx tunnel --raw-mode http --https-redirect -t 127.0.0.1:"$def_port" > ".loclx.log" 2>&1 &
+	else
+		sleep 2 && ./loclx tunnel --raw-mode http --https-redirect -t 127.0.0.1:"$def_port" > ".loclx.log" 2>&1 &
+	fi
+	
+	sleep 8
+	loclx_url=$(grep -o '[0-9a-zA-Z.]*\.loclx.io' ".loclx.log")
+	printf "\n\n${RS} ${CR}[${CW}-${CR}]${CG} Successfully Hosted at : ${CY}http://${loclx_url}${RS}"
+	printf "\n\n ${CR}[${CW}-${CR}]${CC} Press Ctrl + C to exit.${RS}\n"
+	while [ true ]; do
+		sleep 0.75
+	done
 }
 
 menu() {
+	logo
 	echo -e "\n${CR} [${CW}01${CR}]${CG} Localhost ${CR}[${CC}Manual Forwarding${CR}]"
-	echo -e "${CR} [${CW}02${CR}]${CG} Ngrok.io [Auth Token Needed]"
+	echo -e "${CR} [${CW}02${CR}]${CG} Ngrok.io"
 	echo -e "${CR} [${CW}03${CR}]${CG} Cloudflared"
+	echo -e "${CR} [${CW}04${CR}]${CG} LocalXpose"
 	printf "\n${RS} ${CR}[${CW}-${CR}]${CG} Select an Option: ${CB}"
 	read REPLY
 
@@ -318,16 +398,17 @@ menu() {
 			ngrok;;
 		3 | 03)
 			cloudflared;;
+		4 | 04)
+			localxpose;;
 		*)
 			printf "\n${RS} ${CR}[${CW}!${CR}]${CY} Invalid option ${CR}[${CW}!${CR}]${RS}\n"
-			sleep 2; logo; path;;
+			sleep 2; path;;
 	esac
-
 }
 
 kill_pid
 package
 install_ngrok
 install_cloudflared
-logo
+install_localxpose
 path
